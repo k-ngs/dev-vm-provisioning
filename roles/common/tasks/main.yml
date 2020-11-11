@@ -1,0 +1,16 @@
+---
+
+- name: Add working user
+  user:
+    name: worker
+    createhome: yes
+    update_password: on_create
+    password: "{{ 'hogehoge' | password_hash('sha512') }}"
+    shell: /bin/bash
+
+- name: Install require packages
+  apt:
+    update_cache: yes
+    name: "{{ item }}"
+  with_items: 
+    - "{{ apt_packages }}"

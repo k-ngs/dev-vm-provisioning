@@ -1,0 +1,8 @@
+---
+- name: Apply to localhost
+  hosts: localhost
+  connection: local
+  roles: 
+    - role: common
+    - role: go
+    - role: docker

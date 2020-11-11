@@ -1,0 +1,45 @@
+---
+
+- name: Check golang tar ball exist
+  stat:
+    path: "go{{ go_version }}.linux-amd64.tar.gz"
+    get_checksum: false
+    get_md5: false
+  register: chk_go_tar
+
+- name: Check go bin dir exist
+  stat:
+    path: "/usr/local/go"
+    get_checksum: false
+    get_md5: false
+  register: chk_go_bin
+
+- name: Download golang tar ball
+  shell: 
+    cmd: wget https://golang.org/dl/go{{ go_version }}.linux-amd64.tar.gz
+  when: not chk_go_tar.stat.exists
+
+- name: Install golang
+  shell: 
+    cmd: tar -C /usr/local -xzf go{{ go_version }}.linux-amd64.tar.gz
+  when: not chk_go_bin.stat.exists
+
+- name: Add go command path to system
+  lineinfile:
+    path: /etc/environment
+    line: PATH=$PATH:/usr/local/go/bin
+
+- name: Create GOPATH directory
+  file: 
+    path: /var/work/go
+    state: directory
+    mode: "0755"
+    recurse: yes
+
+- name: Set environment vars of golang
+  lineinfile:
+    path: /home/worker/.profile
+    line: "{{ item }}"
+  with_items: 
+    - export GOPATH=/var/work/go
+    - export GO111MODULE=auto

@@ -1,0 +1,6 @@
+apt_packages:
+  - curl
+  - openssh-server
+  - jq
+  - vim
+  - wget
